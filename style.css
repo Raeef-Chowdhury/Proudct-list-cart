@@ -13,6 +13,7 @@ body {
   line-height: 1;
   overflow-x: visible;
   background-color: white;
+  padding: 4rem;
   scroll-behavior: smooth;
   margin-left: 8rem;
 }
@@ -23,23 +24,30 @@ body {
   margin-bottom: 6.4rem;
 }
 .product__list--box {
-  display: grid;
-  padding: 4rem;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
 }
+.product__list {
+  display: grid;
+  gap: 3.2rem;
+  grid-template-columns: 28rem 28rem 28rem;
+}
+/* .col-2 {
+  display: grid;
+  grid-column: 2/3;
+} */
 .product__list--item {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 27rem;
-  height: fit-content;
+  height: 43rem;
   border-radius: 1.2rem;
   overflow: hidden;
   box-shadow: 0 0 1.2rem 1.2rem rgba(0, 0, 0, 0.1);
+  transition: all 1s;
 }
 .product__item--img {
+  transition: all 0.3s;
   width: 100%;
 }
 .product__item--btn {
@@ -54,6 +62,30 @@ body {
   transform: translateY(-50%);
   background: white;
   width: 24rem;
+  transition: all 1s;
+}
+.product__item--btn--clicked {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid grey;
+  box-shadow: 0 0 1.2rem 1.2rem rgba(0, 0, 0, 0.1);
+  border-radius: 10rem;
+  transform: translateY(-50%);
+  background: #e67022;
+  width: 70%;
+  transition: all 1s;
+}
+.increment__icon,
+.decrement__icon {
+  color: white;
+  font-size: 2.4rem;
+}
+.btn__clicked--text {
+  font-size: 2.4rem;
+  color: white;
 }
 .product__item--icon {
   color: #e67022;
@@ -86,4 +118,39 @@ body {
 .product__item--price {
   font-size: 2.4rem;
   padding-bottom: 1.2rem;
+}
+.none__out {
+  display: none;
+  animation: moveOut 1s;
+}
+.selected {
+  display: inherit;
+  animation: moveIn 1s;
+}
+@keyframes moveOut {
+  0% {
+    transform: translateY(0%);
+    opacity: 1;
+    display: none;
+  }
+  100% {
+    transform: translateY(-10rem);
+    opacity: 0;
+    display: none;
+  }
+}
+@keyframes moveIn {
+  0% {
+    transform: translateY(10rem);
+    opacity: 0;
+    display: none;
+  }
+  100% {
+    transform: translateY(-60%);
+    opacity: 1;
+    display: inherit;
+  }
+}
+.none {
+  display: none;
 }
