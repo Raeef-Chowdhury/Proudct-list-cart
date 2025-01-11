@@ -65,7 +65,8 @@ let productItems = [
     productPrice: "$6.50",
   },
 ];
-
+////////
+// Dynamically Create Items based on array
 productItems.forEach(({ id, img, productName, productDesp, productPrice }) => {
   let itemNumber = 1;
   productList.innerHTML += `
@@ -101,7 +102,8 @@ productItems.forEach(({ id, img, productName, productDesp, productPrice }) => {
           </div>
       `;
 });
-
+//////////////////////////
+// Make active button visible when normal btn is clicked
 const productBtn = document.querySelectorAll(".product__item--btn");
 const productBtnSelect = document.querySelectorAll(
   ".product__item--btn--clicked"
@@ -119,44 +121,48 @@ productBtn.forEach((btn, index) =>
     }
   })
 );
-
+//////////////////////////////
+// Implement increment and decrement functionality
 const incrementBtn = document.querySelectorAll(".increment__icon");
 const decrementBtn = document.querySelectorAll(".decrement__icon");
 const btnClickedText = document.querySelectorAll(".btn__clicked--text");
 
 incrementBtn.forEach((btn, index) =>
-  btn.addEventListener("click", function () {
-    const text = btnClickedText[index]; // Parse the current text content as a number
-    let textContentNumber = parseInt(text.textContent, 10) || 0;
-
-    // Increment the number
-    textContentNumber += 1;
-
-    // Update the text content with the new value
-    text.textContent = textContentNumber;
-  })
+  btn.addEventListener("click", () => incrementChange(index))
 );
+function incrementChange(index) {
+  const text = btnClickedText[index];
+  let textContentNumber = parseInt(text.textContent, 10) || 0;
+
+  textContentNumber += 1;
+
+  text.textContent = textContentNumber;
+}
 
 decrementBtn.forEach((btn, index) =>
-  btn.addEventListener("click", function () {
-    const text = btnClickedText[index]; // Parse the current text content as a number
-    let textContentNumber = parseInt(text.textContent, 10) || 0;
-
-    // Increment the number
-    textContentNumber -= 1;
-
-    // Update the text content with the new value
-    text.textContent = textContentNumber;
-
-    if (textContentNumber < 1) {
-      text.textContent = 1;
-      const curBtn = productBtn[index];
-      curBtn.classList.remove("none__out");
-      const curActiveBtn = productBtnSelect[index];
-      curActiveBtn.classList.add("none");
-      curActiveBtn.classList.remove("selected");
-      const curImg = itemImg[index];
-      curImg.style.border = "none";
-    }
-  })
+  btn.addEventListener("click", () => decrementChange(index))
 );
+function resetItemState(index) {
+  const curBtn = productBtn[index];
+  curBtn.classList.remove("none__out");
+  const curActiveBtn = productBtnSelect[index];
+  curActiveBtn.classList.add("none");
+  curActiveBtn.classList.remove("selected");
+  const curImg = itemImg[index];
+  curImg.style.border = "none";
+}
+function decrementChange(index) {
+  const text = btnClickedText[index];
+  let textContentNumber = parseInt(text.textContent);
+
+  textContentNumber -= 1;
+
+  text.textContent = textContentNumber;
+
+  if (textContentNumber < 1) {
+    resetItemState(index);
+    text.textContent = 1;
+  }
+}
+///////////////////////////
+//
