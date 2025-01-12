@@ -68,7 +68,7 @@ let productItems = [
 ////////
 // Dynamically Create Items based on array
 productItems.forEach(({ id, img, productName, productDesp, productPrice }) => {
-  let itemNumber = 1;
+  let itemNumber = 0;
   productList.innerHTML += `
        
         <div class="product__list--item" id="${id}">
@@ -144,9 +144,9 @@ function cartChange(btn, index) {
             <div class="cart__item--details">
               <h3 class="cart__item--name">${cartName.textContent}</h3>
               <div class="cart__item--summary">
-                <p class="cart__item--quantity">1x</p>
+                <p class="cart__item--quantity">0x</p>
                 <p class="cart__item--price">${cartPrice.textContent}</p>
-                <p class="cart__item--total--price">$${cartTotalPrice}</p>
+                <p class="cart__item--total--price">$0.00</p>
               </div>
             </div>
 
@@ -168,7 +168,10 @@ const decrementBtn = document.querySelectorAll(".decrement__icon");
 const btnClickedText = document.querySelectorAll(".btn__clicked--text");
 
 incrementBtn.forEach((btn, index) =>
-  btn.addEventListener("click", () => incrementChange(index))
+  btn.addEventListener("click", () => {
+    incrementChange(index);
+    updateCartItem(index);
+  })
 );
 function incrementChange(index) {
   const text = btnClickedText[index];
@@ -180,7 +183,10 @@ function incrementChange(index) {
 }
 
 decrementBtn.forEach((btn, index) =>
-  btn.addEventListener("click", () => decrementChange(index))
+  btn.addEventListener("click", () => {
+    decrementChange(index);
+    updateCartItem(index);
+  })
 );
 function resetItemState(index) {
   const curBtn = productBtn[index];
@@ -201,8 +207,40 @@ function decrementChange(index) {
 
   if (textContentNumber < 1) {
     resetItemState(index);
-    text.textContent = 1;
+    text.textContent = 0;
   }
 }
 ///////////////////////////
-//
+// Adding the quantity and total price
+function updateCartItem(index) {
+  const cartListItems = document.querySelectorAll(".cart__list--item");
+
+  const selectedBtn = productBtnSelect[index];
+
+  const cartSpecific = productBtn[index].parentElement;
+  const cartPrice = cartSpecific.querySelector(".product__item--price");
+  const cartPriceNumber = parseFloat(cartPrice.textContent.slice(1));
+  const quantity = parseInt(selectedBtn.textContent, 10);
+  const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
+
+  cartListItems.forEach((item) => {
+    const itemName = item.querySelector(".cart__item--name").textContent;
+    const itemQuantity = item.querySelector(".cart__item--quantity");
+    const itemTotalPrice = item.querySelector(".cart__item--total--price");
+    if (
+      itemName ===
+      cartSpecific.querySelector(".product__item--name").textContent
+    ) {
+      if (quantity < 1) {
+        item.remove();
+      } else {
+        itemQuantity.textContent = `${quantity}x`;
+        itemTotalPrice.textContent = `$${cartTotalPrice}`;
+      }
+    }
+  });
+}
+// Deleting for one specific item
+
+const deletebtn = document.querySelectorAll(".delete__icon");
+console.log(deletebtn);
