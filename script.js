@@ -119,8 +119,48 @@ productBtn.forEach((btn, index) =>
       selectedBtn.classList.add("selected");
       selectedBtn.classList.remove("none");
     }
+    cartChange(btn, index);
   })
 );
+function cartChange(btn, index) {
+  const selectedBtn = productBtnSelect[index];
+  console.log(selectedBtn);
+
+  const cartList = document.querySelector(".cart__list");
+
+  // Selecting specific cart item name
+  const cartSpecific = btn.parentElement;
+  const cartName = cartSpecific.querySelector(".product__item--name");
+  // Selecting specific cart item price
+  const cartPrice = cartSpecific.querySelector(".product__item--price");
+  //selecting total number text
+  const cartPriceNumber = parseFloat(cartPrice.textContent.slice(1));
+  const quantity = parseInt(selectedBtn.textContent, 10);
+  const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
+
+  const cartItem = document.createElement("li");
+  cartItem.innerHTML = `
+          <div class="cart__item--wrapper">
+            <div class="cart__item--details">
+              <h3 class="cart__item--name">${cartName.textContent}</h3>
+              <div class="cart__item--summary">
+                <p class="cart__item--quantity">1x</p>
+                <p class="cart__item--price">${cartPrice.textContent}</p>
+                <p class="cart__item--total--price">$${cartTotalPrice}</p>
+              </div>
+            </div>
+
+            <div class="delete__btn--box">
+              <ion-icon
+                name="remove-circle-outline"
+                class="delete__icon"
+              ></ion-icon>
+            </div>
+          </div>
+       `;
+  cartItem.classList.add("cart__list--item");
+  cartList.appendChild(cartItem);
+}
 //////////////////////////////
 // Implement increment and decrement functionality
 const incrementBtn = document.querySelectorAll(".increment__icon");
