@@ -160,6 +160,7 @@ function cartChange(btn, index) {
        `;
   cartItem.classList.add("cart__list--item");
   cartList.appendChild(cartItem);
+  addDeleteEventListeners(index);
 }
 //////////////////////////////
 // Implement increment and decrement functionality
@@ -238,9 +239,70 @@ function updateCartItem(index) {
         itemTotalPrice.textContent = `$${cartTotalPrice}`;
       }
     }
+    allItemPrice();
+    totalQuantity();
   });
 }
-// Deleting for one specific item
+// Getting order total amount
+function allItemPrice() {
+  const cartListItems = document.querySelectorAll(".cart__list--item");
+  let totalPrice = 0;
 
-const deletebtn = document.querySelectorAll(".delete__icon");
-console.log(deletebtn);
+  cartListItems.forEach((item) => {
+    const itemQuantity = parseInt(
+      item.querySelector(".cart__item--quantity").textContent.replace("x", "")
+    );
+
+    const itemPrice = parseFloat(
+      item.querySelector(".cart__item--price").textContent.slice(1)
+    );
+    totalPrice += itemQuantity * itemPrice;
+  });
+
+  const totalPriceDisplay = document.querySelector(".price__all--price");
+  totalPriceDisplay.textContent = `$${totalPrice.toFixed(2)}`;
+}
+// Getting quantity total
+function totalQuantity() {
+  const cartListItems = document.querySelectorAll(".cart__list--item");
+  let totalQuantity = 0;
+  cartListItems.forEach((item) => {
+    const itemQuantity = parseInt(
+      item.querySelector(".cart__item--quantity").textContent.replace("x", "")
+    );
+
+    totalQuantity += itemQuantity;
+  });
+
+  const totalQuantityDisplay = document.querySelector(".cart__heading");
+  totalQuantityDisplay.textContent = `Your Cart (${totalQuantity})`;
+}
+// Deleting for one item
+const deleteButton = document.querySelector(".delete__icon");
+function addDeleteEventListeners(index) {
+  const deleteButtons = document.querySelectorAll(".delete__icon");
+
+  deleteButtons.forEach((button) =>
+    button.addEventListener("click", function () {
+      deleteCartItem(button);
+      resetItemState(index);
+    })
+  );
+}
+function deleteCartItem(deleteButton) {
+  const cartItem = deleteButton.closest(".cart__list--item");
+
+  // Get the name of the product being removed
+  const cartItemName = cartItem.querySelector(".cart__item--name").textContent;
+
+  // Find the corresponding product button
+  productItems.forEach((item, index) => {
+    if (item.productName === cartItemName) {
+      const quantityText = btnClickedText[index];
+      quantityText.textContent = 0;
+    }
+  });
+  cartItem.remove(); // Remove the item from the cart
+  allItemPrice(); // Update the total price after removal
+  totalQuantity();
+}

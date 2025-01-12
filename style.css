@@ -63,7 +63,7 @@ body {
 .cart__item--summary {
   display: flex;
   gap: 1rem;
-  font-size: 1.6rem;
+  font-size: 1.8em;
 }
 .cart__item--quantity {
   color: #e67022;
