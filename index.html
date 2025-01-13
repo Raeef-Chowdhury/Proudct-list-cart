@@ -18,18 +18,28 @@
       </section>
       <section class="section__cart">
         <h1 class="cart__heading">Your Cart (0)</h1>
-        <ul class="cart__list"></ul>
-        <div class="cart__price--all">
-          <h1 class="price__all--text">Order Total</h1>
-          <h1 class="price__all--price">40$</h1>
+        <div class="no__items--box">
+          <img
+            src="illustration-empty-cart.svg"
+            alt=""
+            class="cart__no--items"
+          />
+          <p class="cart__no--text">Your Added Items will appear here</p>
         </div>
-        <div class="cart__info">
-          <ion-icon name="leaf-outline" class="carbon__icon"></ion-icon>
-          <p class="carbon__text">
-            This is a <strong>carbon-neutral </strong>delivery
-          </p>
+        <div class="cart__main none">
+          <ul class="cart__list"></ul>
+          <div class="cart__price--all">
+            <h1 class="price__all--text">Order Total</h1>
+            <h1 class="price__all--price">$0.00</h1>
+          </div>
+          <div class="cart__info">
+            <ion-icon name="leaf-outline" class="carbon__icon"></ion-icon>
+            <p class="carbon__text">
+              This is a <strong>carbon-neutral </strong>delivery
+            </p>
+          </div>
+          <button class="confirm__btn">confirm order</button>
         </div>
-        <button class="confirm__btn">confirm order</button>
       </section>
     </main>
   </body>

@@ -68,7 +68,7 @@ let productItems = [
 ////////
 // Dynamically Create Items based on array
 productItems.forEach(({ id, img, productName, productDesp, productPrice }) => {
-  let itemNumber = 0;
+  let itemNumber = 1;
   productList.innerHTML += `
        
         <div class="product__list--item" id="${id}">
@@ -120,47 +120,48 @@ productBtn.forEach((btn, index) =>
       selectedBtn.classList.remove("none");
     }
     cartChange(btn, index);
+    totalQuantity();
+    allItemPrice();
   })
 );
 function cartChange(btn, index) {
   const selectedBtn = productBtnSelect[index];
-  console.log(selectedBtn);
-
   const cartList = document.querySelector(".cart__list");
 
-  // Selecting specific cart item name
-  const cartSpecific = btn.parentElement;
-  const cartName = cartSpecific.querySelector(".product__item--name");
-  // Selecting specific cart item price
-  const cartPrice = cartSpecific.querySelector(".product__item--price");
-  //selecting total number text
-  const cartPriceNumber = parseFloat(cartPrice.textContent.slice(1));
-  const quantity = parseInt(selectedBtn.textContent, 10);
-  const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
+  if (selectedBtn.classList.contains("selected")) {
+    // Selecting specific cart item name
+    const cartSpecific = btn.parentElement;
+    const cartName = cartSpecific.querySelector(".product__item--name");
+    // Selecting specific cart item price
+    const cartPrice = cartSpecific.querySelector(".product__item--price");
+    // Selecting total number text
+    const cartPriceNumber = parseFloat(cartPrice.textContent.slice(1));
+    const quantity = parseInt(
+      selectedBtn.querySelector(".btn__clicked--text").textContent,
+      10
+    );
+    const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
 
-  const cartItem = document.createElement("li");
-  cartItem.innerHTML = `
-          <div class="cart__item--wrapper">
-            <div class="cart__item--details">
-              <h3 class="cart__item--name">${cartName.textContent}</h3>
-              <div class="cart__item--summary">
-                <p class="cart__item--quantity">0x</p>
-                <p class="cart__item--price">${cartPrice.textContent}</p>
-                <p class="cart__item--total--price">$0.00</p>
-              </div>
-            </div>
-
-            <div class="delete__btn--box">
-              <ion-icon
-                name="remove-circle-outline"
-                class="delete__icon"
-              ></ion-icon>
-            </div>
+    const cartItem = document.createElement("li");
+    cartItem.innerHTML = `
+      <div class="cart__item--wrapper">
+        <div class="cart__item--details">
+          <h3 class="cart__item--name">${cartName.textContent}</h3>
+          <div class="cart__item--summary">
+            <p class="cart__item--quantity">${quantity}x</p>
+            <p class="cart__item--price">${cartPrice.textContent}</p>
+            <p class="cart__item--total--price">$${cartTotalPrice}</p>
           </div>
-       `;
-  cartItem.classList.add("cart__list--item");
-  cartList.appendChild(cartItem);
-  addDeleteEventListeners(index);
+        </div>
+        <div class="delete__btn--box">
+          <ion-icon name="remove-circle-outline" class="delete__icon"></ion-icon>
+        </div>
+      </div>
+    `;
+    cartItem.classList.add("cart__list--item");
+    cartList.appendChild(cartItem);
+    addDeleteEventListeners(index);
+  }
 }
 //////////////////////////////
 // Implement increment and decrement functionality
@@ -208,8 +209,9 @@ function decrementChange(index) {
 
   if (textContentNumber < 1) {
     resetItemState(index);
-    text.textContent = 0;
+    text.textContent = 1;
   }
+  totalQuantity();
 }
 ///////////////////////////
 // Adding the quantity and total price
@@ -217,6 +219,7 @@ function updateCartItem(index) {
   const cartListItems = document.querySelectorAll(".cart__list--item");
 
   const selectedBtn = productBtnSelect[index];
+  console.log(selectedBtn);
 
   const cartSpecific = productBtn[index].parentElement;
   const cartPrice = cartSpecific.querySelector(".product__item--price");
@@ -232,7 +235,7 @@ function updateCartItem(index) {
       itemName ===
       cartSpecific.querySelector(".product__item--name").textContent
     ) {
-      if (quantity < 1) {
+      if (selectedBtn.classList.contains("none")) {
         item.remove();
       } else {
         itemQuantity.textContent = `${quantity}x`;
@@ -265,6 +268,8 @@ function allItemPrice() {
 // Getting quantity total
 function totalQuantity() {
   const cartListItems = document.querySelectorAll(".cart__list--item");
+  const cartMain = document.querySelector(".cart__main");
+  const noItemsBox = document.querySelector(".no__items--box");
   let totalQuantity = 0;
   cartListItems.forEach((item) => {
     const itemQuantity = parseInt(
@@ -276,6 +281,13 @@ function totalQuantity() {
 
   const totalQuantityDisplay = document.querySelector(".cart__heading");
   totalQuantityDisplay.textContent = `Your Cart (${totalQuantity})`;
+  if (totalQuantity > 0) {
+    cartMain.classList.remove("none");
+    noItemsBox.classList.add("none");
+  } else {
+    cartMain.classList.add("none");
+    noItemsBox.classList.remove("none");
+  }
 }
 // Deleting for one item
 const deleteButton = document.querySelector(".delete__icon");
@@ -299,7 +311,7 @@ function deleteCartItem(deleteButton) {
   productItems.forEach((item, index) => {
     if (item.productName === cartItemName) {
       const quantityText = btnClickedText[index];
-      quantityText.textContent = 0;
+      quantityText.textContent = 1;
     }
   });
   cartItem.remove(); // Remove the item from the cart

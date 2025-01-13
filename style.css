@@ -48,7 +48,17 @@ body {
   display: flex;
   flex-direction: column;
 }
-
+.no__items--box {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cart__no--text {
+  text-align: center;
+  font-size: 1.4rem;
+}
 .cart__item--name {
   font-size: 2.4rem;
   font-weight: bold;
