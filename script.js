@@ -149,7 +149,7 @@ function cartChange(btn, index) {
           <h3 class="cart__item--name">${cartName.textContent}</h3>
           <div class="cart__item--summary">
             <p class="cart__item--quantity">${quantity}x</p>
-            <p class="cart__item--price">${cartPrice.textContent}</p>
+            <p class="cart__item--price">@${cartPrice.textContent}</p>
             <p class="cart__item--total--price">$${cartTotalPrice}</p>
           </div>
         </div>
@@ -257,8 +257,10 @@ function allItemPrice() {
     );
 
     const itemPrice = parseFloat(
-      item.querySelector(".cart__item--price").textContent.slice(1)
+      item.querySelector(".cart__item--price").textContent.slice(2)
     );
+    console.log(itemPrice);
+
     totalPrice += itemQuantity * itemPrice;
   });
 
@@ -318,3 +320,25 @@ function deleteCartItem(deleteButton) {
   allItemPrice(); // Update the total price after removal
   totalQuantity();
 }
+// Modal
+const modalBtn = document.querySelector(".confirm__btn");
+const modal = document.querySelector(".modal");
+const deleteModal = document.querySelector(".modal__exit--btn");
+const overlay = document.querySelector(".overlay");
+overlay.addEventListener("click", function () {
+  if (!modal.classList.contains("none")) {
+    modal.classList.add("none");
+    overlay.classList.add("none");
+  }
+});
+modalBtn.addEventListener("click", function () {
+  modal.classList.remove("none");
+  overlay.classList.remove("none");
+});
+function addModal() {
+  modal.classList.remove("none");
+}
+deleteModal.addEventListener("click", function () {
+  modal.classList.add("none");
+  overlay.classList.add("none");
+});
