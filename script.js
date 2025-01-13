@@ -38,7 +38,7 @@ let productItems = [
   },
   {
     id: Math.floor(Math.random() * Date.now()),
-    img: "image-meringue-desktop.jpg",
+    img: "image-pie-desktop.jpg",
     productName: "Pie",
     productDesp: "Lemon Meringue Pie",
     productPrice: "$5.00",
@@ -120,6 +120,7 @@ productBtn.forEach((btn, index) =>
       selectedBtn.classList.remove("none");
     }
     cartChange(btn, index);
+    updateModalItems(btn, index);
     totalQuantity();
     allItemPrice();
   })
@@ -173,6 +174,7 @@ incrementBtn.forEach((btn, index) =>
   btn.addEventListener("click", () => {
     incrementChange(index);
     updateCartItem(index);
+    updateModalItem(index);
   })
 );
 function incrementChange(index) {
@@ -188,6 +190,7 @@ decrementBtn.forEach((btn, index) =>
   btn.addEventListener("click", () => {
     decrementChange(index);
     updateCartItem(index);
+    updateModalItem(index);
   })
 );
 function resetItemState(index) {
@@ -342,3 +345,73 @@ deleteModal.addEventListener("click", function () {
   modal.classList.add("none");
   overlay.classList.add("none");
 });
+
+function updateModalItems(btn, index) {
+  const selectedBtn = productBtnSelect[index];
+  const modalList = document.querySelector(".modal__items--list");
+
+  // Selecting specific cart item name
+  const cartSpecific = btn.parentElement;
+  const cartName = cartSpecific.querySelector(".product__item--name");
+  // Selecting specific cart item price
+  const cartPrice = cartSpecific.querySelector(".product__item--price");
+  // Selecting total number text
+  const cartPriceNumber = parseFloat(cartPrice.textContent.slice(1));
+  const quantity = parseInt(
+    selectedBtn.querySelector(".btn__clicked--text").textContent,
+    10
+  );
+  const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
+  const img = cartName.textContent;
+  const modalItem = document.createElement("li");
+  modalItem.innerHTML = `
+            <img src="image-${img}-desktop.jpg" class="modal__item--img" />
+            <div class="modal__item--info">
+              <p class="modal__info--heading">${cartName.textContent}</p>
+              <div class="modal__additional--info">
+                <p class="modal__info--quantity">1x</p>
+                <p class="modal__info--price">${cartPrice.textContent}</p>
+              </div>
+            </div>
+            <div class="modal__total--price">$${cartTotalPrice}</div>
+    `;
+  modalItem.classList.add("modal__item");
+  modalList.appendChild(modalItem);
+}
+
+function updateModalItem(index) {
+  const modalList = document.querySelectorAll(
+    ".modal__items--list .modal__item"
+  );
+
+  const selectedBtn = productBtnSelect[index];
+  console.log(selectedBtn);
+
+  const cartSpecific = productBtn[index].parentElement;
+  const cartName = cartSpecific.querySelector(
+    ".product__item--name"
+  ).textContent;
+  const cartPrice = cartSpecific.querySelector(".product__item--price");
+  const cartPriceNumber = parseFloat(cartPrice.textContent.slice(1));
+  const quantity = parseInt(
+    selectedBtn.querySelector(".btn__clicked--text").textContent,
+    10
+  );
+  const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
+
+  modalList.forEach((item) => {
+    const modalName = item.querySelector(".modal__info--heading").textContent;
+    if (modalName === cartName) {
+      const modalQuantity = item.querySelector(".modal__info--quantity");
+      const modalTotalPrice = item.querySelector(".modal__total--price");
+
+      modalQuantity.textContent = `${quantity}x`;
+      modalTotalPrice.textContent = `$${cartTotalPrice}`;
+      if (selectedBtn.classList.contains("none")) {
+        item.remove();
+      }
+    }
+  });
+  allItemPrice();
+  totalQuantity();
+}
