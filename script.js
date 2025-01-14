@@ -102,6 +102,58 @@ productItems.forEach(({ id, img, productName, productDesp, productPrice }) => {
           </div>
       `;
 });
+
+const btnClickedText = document.querySelectorAll(".btn__clicked--text");
+const incrementBtn = document.querySelectorAll(".increment__icon");
+const decrementBtn = document.querySelectorAll(".decrement__icon");
+
+incrementBtn.forEach((btn, index) =>
+  btn.addEventListener("click", () => {
+    incrementChange(index);
+    updateCartItem(index);
+    updateModalItem(index);
+  })
+);
+function incrementChange(index) {
+  const text = btnClickedText[index];
+  let textContentNumber = parseInt(text.textContent, 10) || 0;
+
+  textContentNumber += 1;
+
+  text.textContent = textContentNumber;
+}
+
+decrementBtn.forEach((btn, index) =>
+  btn.addEventListener("click", () => {
+    decrementChange(index);
+    updateCartItem(index);
+    updateModalItem(index);
+  })
+);
+function resetItemState(index) {
+  const curBtn = productBtn[index];
+  curBtn.classList.remove("none__out");
+  const curActiveBtn = productBtnSelect[index];
+  curActiveBtn.classList.add("none");
+  curActiveBtn.classList.remove("selected");
+  const curImg = itemImg[index];
+  curImg.style.border = "none";
+}
+
+function decrementChange(index) {
+  const text = btnClickedText[index];
+  let textContentNumber = parseInt(text.textContent);
+
+  textContentNumber -= 1;
+
+  text.textContent = textContentNumber;
+
+  if (textContentNumber < 1) {
+    resetItemState(index);
+    text.textContent = 1;
+  }
+  totalQuantity();
+}
 //////////////////////////
 // Make active button visible when normal btn is clicked
 const productBtn = document.querySelectorAll(".product__item--btn");
@@ -165,57 +217,7 @@ function cartChange(btn, index) {
   }
 }
 //////////////////////////////
-// Implement increment and decrement functionality
-const incrementBtn = document.querySelectorAll(".increment__icon");
-const decrementBtn = document.querySelectorAll(".decrement__icon");
-const btnClickedText = document.querySelectorAll(".btn__clicked--text");
-
-incrementBtn.forEach((btn, index) =>
-  btn.addEventListener("click", () => {
-    incrementChange(index);
-    updateCartItem(index);
-    updateModalItem(index);
-  })
-);
-function incrementChange(index) {
-  const text = btnClickedText[index];
-  let textContentNumber = parseInt(text.textContent, 10) || 0;
-
-  textContentNumber += 1;
-
-  text.textContent = textContentNumber;
-}
-
-decrementBtn.forEach((btn, index) =>
-  btn.addEventListener("click", () => {
-    decrementChange(index);
-    updateCartItem(index);
-    updateModalItem(index);
-  })
-);
-function resetItemState(index) {
-  const curBtn = productBtn[index];
-  curBtn.classList.remove("none__out");
-  const curActiveBtn = productBtnSelect[index];
-  curActiveBtn.classList.add("none");
-  curActiveBtn.classList.remove("selected");
-  const curImg = itemImg[index];
-  curImg.style.border = "none";
-}
-function decrementChange(index) {
-  const text = btnClickedText[index];
-  let textContentNumber = parseInt(text.textContent);
-
-  textContentNumber -= 1;
-
-  text.textContent = textContentNumber;
-
-  if (textContentNumber < 1) {
-    resetItemState(index);
-    text.textContent = 1;
-  }
-  totalQuantity();
-}
+// Implement increment and decrement
 ///////////////////////////
 // Adding the quantity and total price
 function updateCartItem(index) {
@@ -296,15 +298,26 @@ function totalQuantity() {
 }
 // Deleting for one item
 const deleteButton = document.querySelector(".delete__icon");
-function addDeleteEventListeners(index) {
+function addDeleteEventListeners() {
   const deleteButtons = document.querySelectorAll(".delete__icon");
 
-  deleteButtons.forEach((button) =>
+  deleteButtons.forEach((button) => {
     button.addEventListener("click", function () {
+      // Find the correct index based on the button clicked
+      const cartItem = button.closest(".cart__list--item");
+      const cartItemName =
+        cartItem.querySelector(".cart__item--name").textContent;
+
+      // Find the index of the product item that matches the cart item name
+      const productIndex = productItems.findIndex(
+        (item) => item.productName === cartItemName
+      );
+
+      // Delete the cart item and reset the corresponding product item state
       deleteCartItem(button);
-      resetItemState(index);
-    })
-  );
+      resetItemState(productIndex);
+    });
+  });
 }
 function deleteCartItem(deleteButton) {
   const cartItem = deleteButton.closest(".cart__list--item");
@@ -312,7 +325,7 @@ function deleteCartItem(deleteButton) {
   // Get the name of the product being removed
   const cartItemName = cartItem.querySelector(".cart__item--name").textContent;
 
-  // Find the corresponding product button
+  // Find the corresponding product button and reset its quantity text
   productItems.forEach((item, index) => {
     if (item.productName === cartItemName) {
       const quantityText = btnClickedText[index];
@@ -332,14 +345,19 @@ overlay.addEventListener("click", function () {
   if (!modal.classList.contains("none")) {
     modal.classList.add("none");
     overlay.classList.add("none");
+    const modalItems = document.querySelectorAll(".modal__item");
+    modalItems.forEach((modal) => modal.remove());
+    const priceAll = document.querySelector(".modal__summary--price");
+    priceAll.textContent = "$0.00";
   }
 });
 modalBtn.addEventListener("click", function () {
-  modal.classList.remove("none");
+  addModal();
   overlay.classList.remove("none");
 });
 function addModal() {
   modal.classList.remove("none");
+  resetPage();
 }
 deleteModal.addEventListener("click", function () {
   modal.classList.add("none");
@@ -362,10 +380,12 @@ function updateModalItems(btn, index) {
     10
   );
   const cartTotalPrice = (quantity * cartPriceNumber).toFixed(2);
-  const img = cartName.textContent;
+  const imgSrc = cartSpecific.querySelector(".product__item--img").src;
+  console.log(imgSrc);
+
   const modalItem = document.createElement("li");
   modalItem.innerHTML = `
-            <img src="image-${img}-desktop.jpg" class="modal__item--img" />
+            <img src="${imgSrc}" class="modal__item--img" />
             <div class="modal__item--info">
               <p class="modal__info--heading">${cartName.textContent}</p>
               <div class="modal__additional--info">
@@ -380,6 +400,7 @@ function updateModalItems(btn, index) {
 }
 
 function updateModalItem(index) {
+  const priceAll = document.querySelector(".modal__summary--price");
   const modalList = document.querySelectorAll(
     ".modal__items--list .modal__item"
   );
@@ -412,6 +433,88 @@ function updateModalItem(index) {
       }
     }
   });
-  allItemPrice();
-  totalQuantity();
+  const totalPrice = document.querySelector(".price__all--price");
+
+  priceAll.textContent = totalPrice.textContent;
+}
+function resetPage() {
+  const cartListItems = document.querySelectorAll(".cart__list--item");
+  cartListItems.forEach((item) => item.remove());
+  const activeBtn = document.querySelectorAll(".product__item--btn--clicked");
+  const allResetBtn = productBtn;
+  allResetBtn.forEach((btn) => btn.classList.remove("none__out"));
+  activeBtn.forEach((btn) => {
+    btn.classList.add("none");
+    btn.classList.remove("selected");
+    btn.innerHTML = `
+            <ion-icon
+              name="remove-circle-outline"
+              class="decrement__icon"
+            ></ion-icon>
+            <p class="btn__clicked--text">1</p>
+            <ion-icon
+              name="add-circle-outline"
+              class="increment__icon"
+            ></ion-icon>`;
+  });
+  const allImg = document.querySelectorAll(".product__item--img");
+  allImg.forEach((img) => (img.style.border = "none"));
+  const cartQuantity = document.querySelector(".cart__heading");
+  cartQuantity.textContent = "Your Cart (0)";
+  const cartMain = document.querySelector(".cart__main");
+  cartMain.classList.add("none");
+
+  const noItemsBox = document.querySelector(".no__items--box");
+  noItemsBox.classList.remove("none");
+  const incrementBtn = document.querySelectorAll(".increment__icon");
+  const decrementBtn = document.querySelectorAll(".decrement__icon");
+  const btnClickedText = document.querySelectorAll(".btn__clicked--text");
+
+  incrementBtn.forEach((btn, index) =>
+    btn.addEventListener("click", () => {
+      incrementChange(index);
+      updateCartItem(index);
+      updateModalItem(index);
+    })
+  );
+  function incrementChange(index) {
+    const text = btnClickedText[index];
+    let textContentNumber = parseInt(text.textContent, 10) || 0;
+
+    textContentNumber += 1;
+
+    text.textContent = textContentNumber;
+  }
+
+  decrementBtn.forEach((btn, index) =>
+    btn.addEventListener("click", () => {
+      decrementChange(index);
+      updateCartItem(index);
+      updateModalItem(index);
+    })
+  );
+  function resetItemState(index) {
+    const curBtn = productBtn[index];
+    curBtn.classList.remove("none__out");
+    const curActiveBtn = productBtnSelect[index];
+    curActiveBtn.classList.add("none");
+    curActiveBtn.classList.remove("selected");
+    const curImg = itemImg[index];
+    curImg.style.border = "none";
+  }
+
+  function decrementChange(index) {
+    const text = btnClickedText[index];
+    let textContentNumber = parseInt(text.textContent);
+
+    textContentNumber -= 1;
+
+    text.textContent = textContentNumber;
+
+    if (textContentNumber < 1) {
+      resetItemState(index);
+      text.textContent = 1;
+    }
+    totalQuantity();
+  }
 }

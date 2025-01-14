@@ -290,6 +290,8 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 45rem;
+  height: 64rem;
+  overflow: scroll;
   padding: 2rem;
   background: white;
   box-shadow: 0 0 1.2rem 1.2rem rgba(0, 0, 0, 0.1);
