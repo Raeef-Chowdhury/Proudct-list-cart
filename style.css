@@ -193,6 +193,11 @@ body {
   width: 24rem;
   transition: all 1s;
 }
+.product__item--btn:hover {
+  cursor: pointer;
+  background-color: #ddd;
+  color: white;
+}
 .product__item--btn--clicked {
   display: flex;
   gap: 0.8rem;
